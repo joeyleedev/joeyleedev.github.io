@@ -1,38 +1,17 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# <div align="center">YiziSpace</div>
 
-## Getting Started
+## 简介
 
-First, run the development server:
+YiziSpace 是我的个人博客网站，用于记录我的点滴进步。使用 Next.js + React18 + TypeScript + TailwindCSS + Shadcn/ui 开发。
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 预览
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- PC 端预览：
+- 客户端预览：
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 特性
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-# yizi-space
-# yizi-space
+- 个人博客浏览
+- 支持模糊搜索（标签、关键字）
+- RSS 收集更新博客
+- 使用 next-theme 支持明暗主题切换
