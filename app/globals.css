@@ -1,6 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Navbar滚动效果 - 参考Next.js官网 */
+nav {
+  transition: all 0.2s ease;
+}
+
+nav.scrolled {
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: saturate(180%) blur(10px);
+  border-bottom-color: rgba(234, 234, 234, 0.8);
+}
+
+.dark nav.scrolled {
+  background-color: rgba(
+    10,
+    10,
+    10,
+    0.8
+  ); /* 使用稍微亮一点的黑色，与--background变量(3.9%亮度)匹配 */
+  backdrop-filter: saturate(180%) blur(10px);
+  border-bottom-color: rgba(38, 38, 38, 0.8);
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

@@ -1,0 +1,94 @@
+/* 保证 markdown-body 背景透明 */
+.markdown-body {
+  background: transparent !important;
+}
+
+/* 移除GitHub默认边框颜色，由主题模式决定 */
+.markdown-body table {
+  border: none !important;
+}
+
+/* 浅色模式样式 */
+:root:not(.dark) .markdown-body {
+  color: #1a1a1a !important;
+}
+
+:root:not(.dark) .markdown-body pre,
+:root:not(.dark) .markdown-body code {
+  background: #f6f8fa !important;
+  color: #1a1a1a !important;
+}
+
+/* 浅色模式下表格样式修复 */
+:root:not(.dark) .markdown-body table {
+  border-collapse: collapse;
+  display: table;
+  width: 100%;
+  margin: 1em 0;
+}
+
+:root:not(.dark) .markdown-body table tr {
+  background-color: #ffffff;
+  border-top: 1px solid #d0d7de;
+}
+
+:root:not(.dark) .markdown-body table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+:root:not(.dark) .markdown-body table th,
+:root:not(.dark) .markdown-body table td {
+  border: 1px solid #d0d7de;
+  padding: 6px 13px;
+}
+
+/* 深色模式样式 */
+.dark .markdown-body {
+  color: #d1d5db !important;
+}
+
+.dark .markdown-body pre,
+.dark .markdown-body code {
+  background: #161b22 !important;
+  color: #d1d5db !important;
+}
+
+/* 深色模式下表格样式修复 */
+.dark .markdown-body table {
+  border-collapse: collapse;
+  display: table;
+  width: 100%;
+  margin: 1em 0;
+}
+
+.dark .markdown-body table tr {
+  background-color: #0d1117;
+  border-top: 1px solid #30363d;
+}
+
+.dark .markdown-body table tr:nth-child(2n) {
+  background-color: #161b22;
+}
+
+.dark .markdown-body table th,
+.dark .markdown-body table td {
+  border: 1px solid #30363d;
+  padding: 6px 13px;
+}
+
+/* 移除 @layer utilities，直接定义 wiggle 动画工具类 */
+.animate-wiggle {
+  animation: wiggle 0.3s ease-in-out;
+}
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-4px);
+  }
+  80% {
+    transform: translateX(2px);
+  }
+}
