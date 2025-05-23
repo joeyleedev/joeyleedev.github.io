@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import "./markdown-overrides.css";
 import "github-markdown-css/github-markdown.css";
+import BlogDetailClient from "./BlogDetailClient";
 
 function removeFirstH1(markdown: string): string {
   // 匹配第一个以 # 开头的一级标题并移除（不要求在首行）
@@ -45,6 +46,7 @@ export default function BlogDetailPage({ params }: { params: { id: string } }) {
 
   return (
     <main className="px-4 py-8">
+      <BlogDetailClient />
       <div className="mx-auto max-w-3xl">
         <Link
           href="/blog"
