@@ -3,8 +3,8 @@ import { FaGithub } from "react-icons/fa";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { FaBilibili } from "react-icons/fa6";
-import { ModeToggle } from "./ModeToggle";
-import NavbarScroll from "./NavbarScroll";
+import { ModeToggle } from "@/components/theme/ModeToggle";
+import NavbarScroll from "@/components/navigation/NavbarScroll";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import {
   DropdownMenu,

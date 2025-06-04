@@ -1,36 +1,11 @@
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { FiArrowRight } from "react-icons/fi";
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
-
-// 读取所有posts下的md文件，解析frontmatter
-function getAllPosts() {
-  const postsDir = path.join(process.cwd(), "app/blog/posts");
-  const files = fs.readdirSync(postsDir).filter((f) => f.endsWith(".md"));
-  return files
-    .map((file) => {
-      const filePath = path.join(postsDir, file);
-      const slug = file.replace(/\.md$/, "");
-      const raw = fs.readFileSync(filePath, "utf8");
-      const { data } = matter(raw);
-      return {
-        ...(data as { title: string; date: string; desc: string }),
-        id: slug,
-      };
-    })
-    .sort((a, b) => (a.date < b.date ? 1 : -1));
-}
+import { getAllPosts } from "@/lib/utils/blog";
+import { formatDate } from "@/lib/utils/date";
 
 export default function BlogPage() {
   const posts = getAllPosts();
-
-  // 日期格式化
-  function formatDate(dateStr: string) {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("zh-CN", { year: "numeric", month: "long", day: "numeric" });
-  }
 
   return (
     <main className="px-4 py-8">
