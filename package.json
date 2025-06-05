@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "new-post": "node scripts/new-post.js",
+    "preview": "npm run build && npm run start"
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.5",
