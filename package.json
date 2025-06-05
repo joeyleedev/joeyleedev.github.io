@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "new-post": "node scripts/new-post.js",
-    "preview": "npm run build && npm run start"
+    "preview": "npm run build && npm run start",
+    "export": "next build",
+    "deploy": "npm run export"
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.5",
