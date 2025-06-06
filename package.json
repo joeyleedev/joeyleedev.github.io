@@ -7,11 +7,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "new-post": "node scripts/new-post.js",
-    "preview": "npm run build && npm run start",
-    "export": "next build",
-    "deploy": "npm run export",
-    "gh-pages": "next build && touch out/.nojekyll",
     "validate": "node scripts/validate-build.js"
   },
   "dependencies": {

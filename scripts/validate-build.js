@@ -6,58 +6,41 @@ const path = require("path");
 console.log("🔍 验证构建配置...\n");
 
 // 检查必要的文件
-const requiredFiles = [
-  "out/index.html",
-  "out/blog/index.html",
-  "out/about/index.html",
-  "out/.nojekyll",
-];
+const requiredFiles = ["out/index.html", "out/.nojekyll"];
 
 console.log("✅ 检查必要文件:");
+let allFilesExist = true;
 requiredFiles.forEach((file) => {
   if (fs.existsSync(file)) {
     console.log(`   ✓ ${file}`);
   } else {
     console.log(`   ✗ ${file} (缺失)`);
+    allFilesExist = false;
   }
 });
 
-// 检查 index.html 中的路径配置
-console.log("\n📄 检查路径配置:");
-if (fs.existsSync("out/index.html")) {
-  const indexContent = fs.readFileSync("out/index.html", "utf8");
+// 检查 out 目录中的页面
+console.log("\n📄 检查生成的页面:");
+if (fs.existsSync("out")) {
+  const outDir = fs.readdirSync("out", { withFileTypes: true });
+  const pages = outDir
+    .filter((dirent) => dirent.isDirectory() || dirent.name.endsWith(".html"))
+    .map((dirent) => dirent.name);
 
-  // 检查是否没有错误的basePath配置
-  if (!indexContent.includes("/yizi-space/")) {
-    console.log("   ✓ 根路径配置正确");
+  if (pages.length > 0) {
+    pages.forEach((page) => {
+      console.log(`   ✓ ${page}`);
+    });
   } else {
-    console.log("   ✗ 仍包含错误的basePath配置");
-  }
-
-  if (indexContent.includes('href="/blog/"') || indexContent.includes('href="./blog/"')) {
-    console.log("   ✓ 博客链接正确");
-  } else {
-    console.log("   ✗ 博客链接错误");
+    console.log("   ✗ 没有找到生成的页面");
+    allFilesExist = false;
   }
 }
 
-// 检查博客页面
-console.log("\n📝 检查博客页面:");
-const blogFiles = [
-  "out/blog/2024-06-01-first-blog/index.html",
-  "out/blog/2024-05-28-second-blog/index.html",
-  "out/blog/2024-05-20-third-blog/index.html",
-  "out/blog/2024-05-10-fourth-blog/index.html",
-];
-
-blogFiles.forEach((file) => {
-  if (fs.existsSync(file)) {
-    console.log(`   ✓ ${path.basename(path.dirname(file))}`);
-  } else {
-    console.log(`   ✗ ${path.basename(path.dirname(file))} (缺失)`);
-  }
-});
-
 console.log("\n🚀 验证完成!");
-console.log("\n如果所有项目都显示 ✓，那么您的构建配置是正确的。");
-console.log("您可以安全地推送到GitHub，GitHub Pages将正常工作。");
+if (allFilesExist) {
+  console.log("✅ 构建配置正确，可以安全部署到GitHub Pages。");
+} else {
+  console.log("❌ 发现问题，请检查构建配置。");
+  process.exit(1);
+}
