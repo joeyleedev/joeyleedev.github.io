@@ -27,13 +27,14 @@ console.log("\n📄 检查路径配置:");
 if (fs.existsSync("out/index.html")) {
   const indexContent = fs.readFileSync("out/index.html", "utf8");
 
-  if (indexContent.includes("/yizi-space/")) {
-    console.log("   ✓ basePath 配置正确");
+  // 检查是否没有错误的basePath配置
+  if (!indexContent.includes("/yizi-space/")) {
+    console.log("   ✓ 根路径配置正确");
   } else {
-    console.log("   ✗ basePath 配置错误");
+    console.log("   ✗ 仍包含错误的basePath配置");
   }
 
-  if (indexContent.includes('href="/yizi-space/blog/"')) {
+  if (indexContent.includes('href="/blog/"') || indexContent.includes('href="./blog/"')) {
     console.log("   ✓ 博客链接正确");
   } else {
     console.log("   ✗ 博客链接错误");
