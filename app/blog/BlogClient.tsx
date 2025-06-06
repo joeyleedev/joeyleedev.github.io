@@ -114,31 +114,34 @@ export default function BlogClient({ posts }: BlogClientProps) {
         </motion.div>
 
         {/* 文章列表 */}
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="blog-card-grid">
           {filteredPosts.map((post, index) => (
             <motion.div
               key={post.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 + index * 0.1 }}
+              className="h-full"
             >
-              <Link href={`/blog/${post.id}`} className="group block">
-                <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 group-hover:border-primary/50">
-                  <CardHeader className="pb-3">
+              <Link href={`/blog/${post.id}`} className="group block h-full">
+                <Card className="flex h-full min-h-[360px] flex-col overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 group-hover:border-primary/50">
+                  <CardHeader className="flex-shrink-0 pb-3">
                     <div className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
                       <Calendar className="h-4 w-4" />
                       {formatDate(post.date)}
                     </div>
-                    <CardTitle className="line-clamp-2 text-lg font-bold transition-colors group-hover:text-primary">
+                    <CardTitle className="line-clamp-2 min-h-[3.5rem] text-lg font-bold leading-tight transition-colors group-hover:text-primary">
                       {post.title}
                     </CardTitle>
                   </CardHeader>
 
-                  <CardContent className="pb-4">
-                    <p className="line-clamp-3 text-muted-foreground">{post.desc}</p>
+                  <CardContent className="flex-1 pb-4">
+                    <p className="line-clamp-4 min-h-[5.5rem] text-sm leading-relaxed text-muted-foreground">
+                      {post.desc}
+                    </p>
                   </CardContent>
 
-                  <CardFooter className="pt-0">
+                  <CardFooter className="flex-shrink-0 pt-0">
                     <div className="flex items-center gap-2 text-sm font-medium text-primary transition-all group-hover:gap-3">
                       阅读更多
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
