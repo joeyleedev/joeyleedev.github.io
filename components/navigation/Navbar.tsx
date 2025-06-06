@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { FaGithub } from "react-icons/fa";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Logo } from "@/components/ui/logo";
 
 export default function Navbar() {
   return (
@@ -22,13 +22,7 @@ export default function Navbar() {
           {/* Logo部分 */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
-              <Image
-                src="/logo-light-bold.svg"
-                alt="Yizi Space Logo"
-                width={32}
-                height={32}
-                priority
-              />
+              <Logo width={32} height={32} priority />
               <h1 className="ml-1 text-2xl font-bold">YIZISPACE</h1>
             </Link>
           </div>
