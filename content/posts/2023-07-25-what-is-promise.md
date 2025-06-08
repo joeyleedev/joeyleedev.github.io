@@ -33,7 +33,7 @@ let promise = new Promise(function (resolve, reject) {
   - state：初始值为“pending”，resolve 后状态变为“fulfilled”，reject 后变为”rejected“
   - result：初始值为“undefined”，resolve 后变为 resolve(value)里的 value，reject 后变为 reject(error)里的 error
 
-  ![截屏2023-07-22 23.38.56](/images/what-is-promise.assets/截屏2023-07-22_23.38.56.png)
+  ![截屏2023-07-22 23.38.56](/images/posts/what-is-promise.assets/截屏2023-07-22_23.38.56.png)
 
 - 总的来说，executor 会完成一件任务（通常需要花费一些时间），然后会告诉 resolve 或 reject 来改变状态并输出结果。
 

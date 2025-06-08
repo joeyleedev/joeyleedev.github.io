@@ -62,7 +62,7 @@ Next.js 自动进行代码分割，因此每个页面仅加载该页面所需的
 
 Next.js 可以在顶级目录下提供静态资源
 
-![asset-pic.png](/images/how-to-create-a-blog-app/asset-pic.png)
+![asset-pic.png](/images/posts/how-to-create-a-blog-app/asset-pic.png)
 
 ### Image Component
 
@@ -118,7 +118,7 @@ export default function FirstPost() {
 
 文件结构：
 
-![截屏2023-07-10 23.43.47.png](/images/how-to-create-a-blog-app/style-structure.png)
+![截屏2023-07-10 23.43.47.png](/images/posts/how-to-create-a-blog-app/style-structure.png)
 
 在 Next 中，可以使用 CSS Modules，CSS 文件名需要以.module.css 结尾
 
@@ -180,14 +180,14 @@ export default function Alert({ children, type }) {
 
 Next.js 默认提前渲染每一页，有助于更好的性能和 SEO。并且每一页仅与必要的 javascript 进行关联
 
-![截屏2023-07-11 17.04.19.png](/images/how-to-create-a-blog-app/pre-rendering.png)
+![截屏2023-07-11 17.04.19.png](/images/posts/how-to-create-a-blog-app/pre-rendering.png)
 
 ### Two Forms of Pre-rendering
 
 1. **Static Generation** is the pre-rendering method that generates the HTML at **build time**. The pre-rendered HTML is then *reused* on each request.
 2. **Server-side Rendering** is the pre-rendering method that generates the HTML on **each request**.
 
-![截屏2023-07-11 17.07.43.png](/images/how-to-create-a-blog-app/two-forms.png)
+![截屏2023-07-11 17.07.43.png](/images/posts/how-to-create-a-blog-app/two-forms.png)
 
 ### When to Use SSG v.s. SSR
 
@@ -204,9 +204,9 @@ You can use [Static Generation](https://nextjs.org/docs/basic-features/pages#st
 
 ### SSG with and without Data
 
-![截屏2023-07-11 17.14.19.png](/images/how-to-create-a-blog-app/ssg-data.png)
+![截屏2023-07-11 17.14.19.png](/images/posts/how-to-create-a-blog-app/ssg-data.png)
 
-![截屏2023-07-11 17.14.28.png](/images/how-to-create-a-blog-app/ssg-with-data.png)
+![截屏2023-07-11 17.14.28.png](/images/posts/how-to-create-a-blog-app/ssg-with-data.png)
 
 ### SSG with Data using getStaticProps
 
@@ -230,7 +230,7 @@ export async function getStaticProps() {
 
 ### Implement getStaticProps
 
-![截屏2023-07-11 17.30.01.png](/images/how-to-create-a-blog-app/getStaticProps-intro.png)
+![截屏2023-07-11 17.30.01.png](/images/posts/how-to-create-a-blog-app/getStaticProps-intro.png)
 
 ### getStaticProps Details
 
@@ -265,7 +265,7 @@ export async function getSortedPostsData() {
 
 可以使用 SSR
 
-![截屏2023-07-11 17.36.28.png](/images/how-to-create-a-blog-app/ssr-data.png)
+![截屏2023-07-11 17.36.28.png](/images/posts/how-to-create-a-blog-app/ssr-data.png)
 
 ### Using getServerSideProps
 
@@ -283,7 +283,7 @@ export async function getServerSideProps(context) {
 
 适用于 user dashboard pages
 
-![截屏2023-07-11 17.39.02.png](/images/how-to-create-a-blog-app/csr-data.png)
+![截屏2023-07-11 17.39.02.png](/images/posts/how-to-create-a-blog-app/csr-data.png)
 
 ### SWR
 
@@ -305,13 +305,13 @@ function Profile() {
 
 ### **Page Path Depends on External Data**
 
-![截屏2023-07-11 17.55.27.png](/images/how-to-create-a-blog-app/render-external.png)
+![截屏2023-07-11 17.55.27.png](/images/posts/how-to-create-a-blog-app/render-external.png)
 
 ### **Generate Pages with Dynamic Routes**
 
 1. [] means dynamic routes here
 
-![截屏2023-07-11 20.48.59.png](/images/how-to-create-a-blog-app/page-dynamic-routes.png)
+![截屏2023-07-11 20.48.59.png](/images/posts/how-to-create-a-blog-app/page-dynamic-routes.png)
 
 ### Fetch External API or Query Database
 
