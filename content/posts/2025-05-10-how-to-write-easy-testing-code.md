@@ -10,6 +10,12 @@ desc: 深入探讨如何通过依赖注入、面向接口编程和单一职责�
 
 在之前的分享中，我们已经学习了如何使用 `testing` 和 `testify` 进行单元测试，但是在实际的开发中，由于依赖复杂、难以隔离、Mock困难等问题，往往使得编写单元测试很难进行下去。因此，如何写出易于测试的代码是一个值得深思的问题。
 
+**本次分享目标：**
+- 🎯 理解难以测试代码的根本问题
+- 🔧 掌握编写易于测试代码的核心原则
+- 💻 通过实际案例学会重构技巧
+- ✅ 学会为重构后的代码编写有效的单元测试
+
 ## 难以测试的业务逻辑
 
 假设我们有一个函数，用于处理用户注册的逻辑，包括以下步骤：
@@ -22,6 +28,14 @@ desc: 深入探讨如何通过依赖注入、面向接口编程和单一职责�
 
 ```go
 package logic
+
+// User 用户结构体
+type User struct {
+    ID       int    `json:"id"`
+    Email    string `json:"email"`
+    Password string `json:"password"`
+    Name     string `json:"name"`
+}
 
 func RegisterUser(user User) error {
 	// Check if the user already exists
@@ -55,13 +69,39 @@ func RegisterUser(user User) error {
 	return nil
 }
 
-func hashPassword(pwd string) {...}
+func hashPassword(pwd string) (string, error) {
+    // 使用 bcrypt 进行密码哈希
+    bytes, err := bcrypt.GenerateFromPassword([]byte(pwd), 14)
+    return string(bytes), err
+}
 ```
 
-上面这段代码逻辑看起来还是比较清晰的，先去数据库查询用户是否存在，若不存在就加密密码保存用户到数据库，然后发送欢迎邮件。但是当我们想给这个业务逻辑进行单元测试的时候，就会发现很难进行下去。主要问题如下：
+上面这段代码逻辑看起来还是比较清晰的，先去数据库查询用户是否存在，若不存在就加密密码保存用户到数据库，然后发送欢迎邮件。
 
-1. **违反单一职责原则（SRP）：**这个函数的主要功能是注册用户，其中包括检查用户是否存在、密码哈希处理、保存用户到数据库和发送欢迎邮件。看起来每个步骤都分开处理了，但可能存在职责过多的问题。根据单一职责原则（SRP），一个函数应该只有一个引起变化的原因。这里 `RegisterUser` 函数处理了用户验证、密码处理、数据存储和邮件发送，这明显承担了多个职责。
-2. **依赖耦合：**函数中直接使用了 `repo` 和 `emailsender` 这样的包级别的依赖，这会导致代码耦合度高，难以进行单元测试。比如，`repo.GetUserByEmail` 和 `emailsender.SendWelcomeEmail` 直接调用了外部依赖，如果在测试中需要模拟这些操作，就会很困难，因为它们没有被注入进来。
+### 测试困难演示
+
+让我们尝试为这个函数编写测试，就会发现问题所在：
+
+```go
+func TestRegisterUser(t *testing.T) {
+    // ❌ 问题1：需要真实的数据库连接
+    // repo 是包级变量，测试时会连接真实数据库
+    
+    // ❌ 问题2：无法控制外部依赖的行为
+    // 无法模拟 "用户已存在" 的场景
+    
+    // ❌ 问题3：测试会发送真实邮件
+    // emailsender.SendWelcomeEmail 会调用真实的邮件服务
+    
+    // ❌ 问题4：测试之间相互影响
+    // 每次测试都会在数据库中创建真实用户
+}
+```
+
+但是当我们想给这个业务逻辑进行单元测试的时候，就会发现很难进行下去。主要问题如下：
+
+1. **违反单一职责原则（SRP）：** 这个函数的主要功能是注册用户，其中包括检查用户是否存在、密码哈希处理、保存用户到数据库和发送欢迎邮件。看起来每个步骤都分开处理了，但可能存在职责过多的问题。根据单一职责原则（SRP），一个函数应该只有一个引起变化的原因。这里 `RegisterUser` 函数处理了用户验证、密码处理、数据存储和邮件发送，这明显承担了多个职责。
+2. **依赖耦合：** 函数中直接使用了 `repo` 和 `emailsender` 这样的包级别的依赖，这会导致代码耦合度高，难以进行单元测试。比如，`repo.GetUserByEmail` 和 `emailsender.SendWelcomeEmail` 直接调用了外部依赖，如果在测试中需要模拟这些操作，就会很困难，因为它们没有被注入进来。
 
 ## 编写易于测试的代码
 
@@ -164,8 +204,49 @@ func (s *UserService) RegisterUser(user User) error {
 
 ## 对重构后的代码进行单元测试
 
+### Mock 对象实现
+
+首先，我们需要为每个接口创建 Mock 实现：
+
 ```go
-// 测试用例：用户注册成功
+// Mock 实现
+type MockUserRepository struct {
+    mock.Mock
+}
+
+func (m *MockUserRepository) GetByEmail(email string) (*User, error) {
+    args := m.Called(email)
+    return args.Get(0).(*User), args.Error(1)
+}
+
+func (m *MockUserRepository) Save(user User) error {
+    args := m.Called(user)
+    return args.Error(0)
+}
+
+type MockPasswordHasher struct {
+    mock.Mock
+}
+
+func (m *MockPasswordHasher) Hash(password string) (string, error) {
+    args := m.Called(password)
+    return args.String(0), args.Error(1)
+}
+
+type MockEmailNotifier struct {
+    mock.Mock
+}
+
+func (m *MockEmailNotifier) SendWelcomeEmail(email string) error {
+    args := m.Called(email)
+    return args.Error(0)
+}
+```
+
+### 测试用例
+
+```go
+// ✅ 测试用例1：用户注册成功
 func TestRegisterUser_Success(t *testing.T) {
     // 初始化 Mock
     mockRepo := new(MockUserRepository)
@@ -173,18 +254,18 @@ func TestRegisterUser_Success(t *testing.T) {
     mockNotifier := new(MockEmailNotifier)
 
     // 设置 Mock 行为
-    mockRepo.On("GetByEmail", "test@example.com").Return(nil, nil)
+    mockRepo.On("GetByEmail", "test@example.com").Return((*User)(nil), nil)
     mockHasher.On("Hash", "123456").Return("hashed_password", nil)
-    mockRepo.On("Save", mock.MatchedBy(func(user repository.User) bool {
+    mockRepo.On("Save", mock.MatchedBy(func(user User) bool {
         return user.Email == "test@example.com" && user.Password == "hashed_password"
     })).Return(nil)
     mockNotifier.On("SendWelcomeEmail", "test@example.com").Return(nil)
 
     // 创建服务实例
-    userService := service.NewUserService(mockRepo, mockHasher, mockNotifier)
+    userService := NewUserService(mockRepo, mockHasher, mockNotifier)
 
     // 调用被测方法
-    err := userService.RegisterUser(service.User{
+    err := userService.RegisterUser(User{
         Email:    "test@example.com",
         Password: "123456",
     })
@@ -194,6 +275,50 @@ func TestRegisterUser_Success(t *testing.T) {
     mockRepo.AssertExpectations(t)
     mockHasher.AssertExpectations(t)
     mockNotifier.AssertExpectations(t)
+}
+
+// ✅ 测试用例2：用户已存在
+func TestRegisterUser_UserExists(t *testing.T) {
+    mockRepo := new(MockUserRepository)
+    mockHasher := new(MockPasswordHasher)
+    mockNotifier := new(MockEmailNotifier)
+
+    // 模拟用户已存在
+    existingUser := &User{Email: "test@example.com"}
+    mockRepo.On("GetByEmail", "test@example.com").Return(existingUser, nil)
+
+    userService := NewUserService(mockRepo, mockHasher, mockNotifier)
+
+    err := userService.RegisterUser(User{
+        Email:    "test@example.com",
+        Password: "123456",
+    })
+
+    assert.Error(t, err)
+    assert.Contains(t, err.Error(), "user already exists")
+    mockRepo.AssertExpectations(t)
+}
+
+// ✅ 测试用例3：密码哈希失败
+func TestRegisterUser_HashPasswordFailed(t *testing.T) {
+    mockRepo := new(MockUserRepository)
+    mockHasher := new(MockPasswordHasher)
+    mockNotifier := new(MockEmailNotifier)
+
+    mockRepo.On("GetByEmail", "test@example.com").Return((*User)(nil), nil)
+    mockHasher.On("Hash", "123456").Return("", errors.New("hash failed"))
+
+    userService := NewUserService(mockRepo, mockHasher, mockNotifier)
+
+    err := userService.RegisterUser(User{
+        Email:    "test@example.com",
+        Password: "123456",
+    })
+
+    assert.Error(t, err)
+    assert.Contains(t, err.Error(), "failed to hash password")
+    mockRepo.AssertExpectations(t)
+    mockHasher.AssertExpectations(t)
 }
 ```
 
@@ -212,9 +337,89 @@ func TestRegisterUser_Success(t *testing.T) {
 4. **测试隔离性**
    每个测试用例都创建新的 Mock 实例，确保测试之间互不干扰
 
+### 测试最佳实践
+
+1. **测试命名规范**
+   ```go
+   // ✅ 好的命名：明确说明测试场景和预期结果
+   func TestRegisterUser_WhenUserExists_ShouldReturnError(t *testing.T)
+   func TestRegisterUser_WhenHashFails_ShouldReturnError(t *testing.T)
+   
+   // ❌ 不好的命名：无法快速理解测试意图
+   func TestRegisterUser1(t *testing.T)
+   func TestRegisterUser2(t *testing.T)
+   ```
+
+2. **Arrange-Act-Assert (AAA) 模式**
+   ```go
+   func TestExample(t *testing.T) {
+       // Arrange: 准备测试数据和 Mock
+       mockRepo := new(MockUserRepository)
+       mockRepo.On("GetByEmail", "test@example.com").Return(nil, nil)
+       
+       // Act: 执行被测试的方法
+       err := userService.RegisterUser(user)
+       
+       // Assert: 验证结果
+       assert.NoError(t, err)
+       mockRepo.AssertExpectations(t)
+   }
+   ```
+
+3. **使用 Table-Driven Tests 处理多场景**
+   ```go
+   func TestRegisterUser_MultipleScenarios(t *testing.T) {
+       tests := []struct {
+           name          string
+           setupMocks    func(*MockUserRepository, *MockPasswordHasher)
+           user          User
+           expectedError string
+       }{
+           {
+               name: "success",
+               setupMocks: func(repo *MockUserRepository, hasher *MockPasswordHasher) {
+                   repo.On("GetByEmail", "test@example.com").Return((*User)(nil), nil)
+                   hasher.On("Hash", "123456").Return("hashed", nil)
+                   repo.On("Save", mock.Anything).Return(nil)
+               },
+               user: User{Email: "test@example.com", Password: "123456"},
+               expectedError: "",
+           },
+           // 更多测试案例...
+       }
+       
+       for _, tt := range tests {
+           t.Run(tt.name, func(t *testing.T) {
+               // 测试逻辑
+           })
+       }
+   }
+   ```
+
 ## 总结
 
-面向接口编程、依赖注入、单一职责这三者互为支撑，有助于构建高内聚、低耦合、易拓展、好测试的代码。但在实际Go项目中并不一定是一个必需项，而应该是根据项目复杂度、维护周期、是否需要测试来"灵活选择"的结果。Go的设计哲学是简洁、直接、可读性强，对于易读易写，复杂度较低的项目，可选择直接通过函数调用快速开发。如果项目对于单元测试有明确要求，那就必须要使用上述方式，通过接口注入来使用mock对象进行测试。
+### 核心原则回顾
+
+| 原则             | 作用         | 实现方式                   |
+| ---------------- | ------------ | -------------------------- |
+| **面向接口编程** | 解耦具体实现 | 定义接口，依赖抽象而非具体 |
+| **依赖注入**     | 控制外部依赖 | 通过构造函数注入接口实现   |
+| **单一职责**     | 明确模块边界 | 每个类/函数只负责一种职责  |
+
+### 何时使用这些原则？
+
+**✅ 推荐使用的场景：**
+- 项目有明确的单元测试要求
+- 团队规模较大，需要并行开发
+- 项目生命周期较长，需要考虑维护性
+- 业务逻辑复杂，外部依赖较多
+
+**⚠️ 可以简化的场景：**
+- 简单的脚本或工具类项目
+- 原型验证阶段
+- 团队对Go接口不够熟悉的初期
+
+记住：**好的代码不仅要能工作，更要易于测试和维护**。面向接口编程、依赖注入、单一职责这三者互为支撑，有助于构建高内聚、低耦合、易拓展、好测试的代码。
 
 ## References
 
