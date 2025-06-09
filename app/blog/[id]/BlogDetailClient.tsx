@@ -88,7 +88,15 @@ export default function BlogDetailClient({
   const scrollToHeading = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      // 计算目标位置，考虑页面底部情况
+      const elementRect = element.getBoundingClientRect();
+      const absoluteElementTop = elementRect.top + window.scrollY;
+      const middlePosition = absoluteElementTop - window.innerHeight / 2;
+
+      window.scrollTo({
+        top: Math.max(0, middlePosition),
+        behavior: "smooth",
+      });
     }
   };
 
@@ -146,6 +154,14 @@ export default function BlogDetailClient({
         <h6 id={id} {...props}>
           {children}
         </h6>
+      );
+    },
+    // 表格组件 - 添加响应式容器
+    table: ({ children, ...props }: any) => {
+      return (
+        <div className="table-container">
+          <table {...props}>{children}</table>
+        </div>
       );
     },
   };
@@ -231,11 +247,11 @@ export default function BlogDetailClient({
                 {nextPost && (
                   <Link href={`/blog/${nextPost.id}`} className={!prevPost ? "md:col-start-2" : ""}>
                     <Card className="group p-4 transition-all hover:border-primary/50 hover:shadow-md">
-                      <div className="mb-2 flex items-center justify-end gap-2 text-sm text-muted-foreground">
-                        下一篇
-                        <ChevronRight className="h-4 w-4" />
+                      <div className="mb-2 flex items-center gap-2 text-sm text-muted-foreground md:justify-end">
+                        <ChevronRight className="h-4 w-4 md:order-2" />
+                        <span className="md:order-1">下一篇</span>
                       </div>
-                      <h3 className="text-right text-base font-medium transition-colors group-hover:text-primary">
+                      <h3 className="text-base font-medium transition-colors group-hover:text-primary md:text-right">
                         {nextPost.title}
                       </h3>
                     </Card>
@@ -291,7 +307,7 @@ export default function BlogDetailClient({
             <Button
               size="icon"
               onClick={scrollToTop}
-              className="group h-12 w-12 rounded-full bg-white/90 text-gray-700 shadow-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-xl dark:bg-gray-800/90 dark:text-gray-300 dark:hover:bg-gray-800"
+              className="group h-12 w-12 rounded-full bg-white/95 text-gray-700 shadow-lg ring-1 ring-gray-200/50 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:text-gray-900 hover:shadow-xl hover:ring-gray-300 dark:bg-gray-800/90 dark:text-gray-300 dark:ring-gray-700/50 dark:hover:bg-gray-800 dark:hover:text-gray-100 dark:hover:ring-gray-600"
               title="返回顶部"
             >
               <ArrowUp className="h-5 w-5 transition-transform duration-300 group-hover:scale-110" />

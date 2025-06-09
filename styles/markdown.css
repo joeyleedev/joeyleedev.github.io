@@ -10,6 +10,87 @@
   border: none !important;
 }
 
+/* 表格响应式处理 - 防止小屏幕溢出 */
+.markdown-body .table-container {
+  overflow-x: auto !important;
+  margin: 1em 0 !important;
+  border-radius: 8px !important;
+  border: 1px solid #d0d7de !important;
+}
+
+.dark .markdown-body .table-container {
+  border: 1px solid #30363d !important;
+}
+
+/* 表格基础样式优化 */
+.markdown-body table {
+  min-width: 100% !important;
+  white-space: nowrap !important;
+}
+
+.markdown-body table th,
+.markdown-body table td {
+  min-width: 100px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* 小屏幕下的表格优化 */
+@media (max-width: 640px) {
+  .markdown-body table {
+    font-size: 14px !important;
+    white-space: normal !important;
+  }
+
+  .markdown-body table th,
+  .markdown-body table td {
+    min-width: 80px !important;
+    padding: 4px 8px !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+  }
+
+  /* 小屏幕下整体 Markdown 内容优化 */
+  .markdown-body {
+    font-size: 15px !important;
+    line-height: 1.65 !important;
+  }
+
+  .markdown-body h1 {
+    font-size: 1.75em !important;
+    margin: 1.2em 0 0.6em 0 !important;
+  }
+
+  .markdown-body h2 {
+    font-size: 1.4em !important;
+    margin: 1.2em 0 0.5em 0 !important;
+  }
+
+  .markdown-body h3 {
+    font-size: 1.2em !important;
+    margin: 1.1em 0 0.4em 0 !important;
+  }
+
+  .markdown-body p {
+    margin: 0.8em 0 !important;
+  }
+
+  .markdown-body blockquote {
+    margin: 0.8em 0 !important;
+    padding: 0 0.75em !important;
+  }
+
+  .markdown-body ul,
+  .markdown-body ol {
+    padding-left: 1.5em !important;
+    margin: 0.8em 0 !important;
+  }
+
+  .markdown-body li {
+    margin: 0.3em 0 !important;
+  }
+}
+
 /* 修复列表样式 */
 .markdown-body ul {
   list-style-type: disc !important;
@@ -82,6 +163,22 @@
   border-radius: 8px !important;
   overflow-x: auto !important;
   background: #f6f8fa !important;
+  max-width: 100% !important;
+  word-wrap: break-word !important;
+}
+
+/* 小屏幕下代码块优化 */
+@media (max-width: 640px) {
+  .markdown-body pre {
+    padding: 0.75em !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+  }
+
+  .markdown-body pre code {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+  }
 }
 
 .markdown-body code:not(pre code) {
@@ -99,6 +196,15 @@
   border-radius: 8px !important;
   margin: 1em 0 !important;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* 小屏幕下图片优化 */
+@media (max-width: 640px) {
+  .markdown-body img {
+    margin: 0.75em 0 !important;
+    border-radius: 6px !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  }
 }
 
 /* 链接样式 */
