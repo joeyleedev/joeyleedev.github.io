@@ -16,7 +16,7 @@ desc: 全面解析Web开发中的跨域问题，详细介绍同源策略、CORS�
 
 跨域指的是在一个网页中，通过 JavaScript 向另一个不同域名、协议或端口的服务器发起请求。这种行为会被浏览器的同源策略（Same-Origin Policy）限制。简单来说，同源策略要求网页只能与与其相同域、协议和端口的资源进行交互。
 
-### **1.2 同源策略**
+### 1.2 同源策略
 
 同源策略（Same-Origin Policy）是一种 Web 浏览器安全策略，用于限制来自不同源（Origin）的脚本之间的交互。在 Web 安全领域中，"源"（Origin）是由协议（protocol）、主机（host）和端口（port）组成的集合，如果两个 URL 具有相同的协议、主机和端口，则它们属于相同的源。
 
@@ -38,9 +38,9 @@ desc: 全面解析Web开发中的跨域问题，详细介绍同源策略、CORS�
 3. 防止跨站点脚本攻击（XSS）
    - 如果没有同源策略，恶意网站可以注入 JavaScript 脚本，直接访问其他网站的资源或数据，这可能导致账户劫持、数据泄露等安全问题。通过限制脚本的访问权限，浏览器避免了很多 XSS 攻击。
 
-## **2. 如何实现跨域请求**
+## 2. 如何实现跨域请求
 
-### **2.1 JSONP（JSON with Padding）**
+### 2.1 JSONP（JSON with Padding）
 
 JSONP 是一种利用 `<script>` 标签来实现跨域请求的技术。它的原理是利用浏览器对 `<script>` 标签没有同源策略限制的特性。通过在页面上动态创建一个 `<script>` 标签，其 src 属性指向目标服务器上的一个接受回调函数作为参数的 JSON 数据接口，服务器返回的数据会被包裹在该回调函数中，然后在客户端通过该回调函数来处理返回的数据。
 
@@ -68,7 +68,7 @@ processData({"name": "John", "age": 30});
 
 通过这种方式，页面 `page1.html` 就能够在回调函数 `processData` 中获取到从目标服务器返回的数据，从而实现了跨域请求。 JSONP 的优点是简单易用，但缺点是对服务器的要求较高，需要服务器端支持返回带有回调函数的 JSON 数据。
 
-### **2.2 CORS（Cross-Origin Resource Sharing）**
+### 2.2 CORS（Cross-Origin Resource Sharing）
 
 **含义**
 
@@ -143,7 +143,7 @@ CORS 中的预检请求（Preflight Request）是一种用于验证是否允许�
 4. 如果服务器允许跨域请求，则返回带有 CORS 头的响应，其中包括 Access-Control-Allow-Origin、Access-Control-Allow-Methods、Access-Control-Allow-Headers 等头部。
 5. 浏览器收到预检请求的响应后，会检查其中的 CORS 头信息，如果符合要求，则允许客户端继续发送实际请求；否则阻止实际请求的发送，并在控制台中显示相应的错误信息。
 
-### **2.3 代理服务器**
+### 2.3 代理服务器
 
 通过代理实现跨域请求的基本思路是，客户端向同源服务器发送请求，然后同源服务器将该请求转发给目标服务器，获取目标服务器的响应后再返回给客户端。这样，客户端就能够间接地访问目标服务器上的资源，绕过了浏览器的同源策略限制。
 
@@ -160,7 +160,7 @@ CORS 中的预检请求（Preflight Request）是一种用于验证是否允许�
 
 ![proxy](/images/posts/what-is-cross-site/proxy.png)
 
-## **Resources**
+## Resources
 
 - [什么是跨域？](https://blog.csdn.net/fudaihb/article/details/140187291)
 - [跨域资源共享 (CORS)](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS)
