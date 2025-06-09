@@ -1,7 +1,7 @@
 ---
 title: Go 参数校验库 validator
 date: 2024-11-20
-desc: Go 参数校验库 validator
+desc: 深入学习Go语言validator库的使用方法，包括基础校验、自定义规则、内部原理等，助力构建健壮的API参数验证系统。
 ---
 
 # Go 参数校验库 validator

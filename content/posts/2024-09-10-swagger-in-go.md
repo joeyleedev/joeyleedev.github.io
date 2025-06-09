@@ -1,7 +1,7 @@
 ---
-title: How to Use Swagger in Go
+title: 如何在 Go 中使用 Swagger
 date: 2024-09-10
-desc: 学习在 Go 项目中使用 Swagger
+desc: 全面掌握在Go项目中集成Swagger API文档的完整流程，从基础概念到实战应用，包括OpenAPI规范和自动化文档生成。
 ---
 
 # 认识Swagger

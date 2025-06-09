@@ -1,7 +1,7 @@
 ---
 title: Go 代码注释规范
 date: 2024-10-10
-desc: Go 代码注释规范
+desc: 详细介绍Go语言代码注释的最佳实践，涵盖包、函数、类型注释规范以及godoc工具的使用方法，提升代码可读性和文档质量。
 ---
 
 # Go 代码注释规范
@@ -69,7 +69,7 @@ package main
 
 在 Go 中，如果一个 package 是一个 command (可以作为单独的程序运行)，那么包注释就是描述这个程序的行为。
 
-通常以该程序的名字开头，也就是这个包的名字。按照英文规则，在开头会将名字大写。比如，如果一个命令的名字叫 “gofmt”，那么这个包的注释就可以像下面这样：
+通常以该程序的名字开头，也就是这个包的名字。按照英文规则，在开头会将名字大写。比如，如果一个命令的名字叫 "gofmt"，那么这个包的注释就可以像下面这样：
 
 ```go
 /*
@@ -428,7 +428,7 @@ type Op uint8
    // in the documentation for the Marshal and Unmarshal functions.
    //
    // For an introduction to this package，see the article
-   // “[JSON and Go].”
+   // "JSON and Go."
    //
    // [RFC 7159]：https://tools.ietf.org/html/rfc7159
    // [JSON and Go]：https://golang.org/doc/articles/json_and_go.html
