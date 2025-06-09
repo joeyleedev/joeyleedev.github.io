@@ -97,7 +97,7 @@ CORS 允许服务器在响应中添加一个或多个特定的 HTTP 头来声明
 
 以下是简单请求的基本流程：
 
-![same-origin](./assets/same-origin.png)
+![same-origin](/images/posts/what-is-cross-site/same-origin.png)
 
 1. 当浏览器发现简单请求跨域后，就会向请求头信息里面自动添加一个 `origin`字段，说明本次请求来自哪个域。
 
@@ -135,7 +135,7 @@ CORS 中的预检请求（Preflight Request）是一种用于验证是否允许�
 
 以下是预检请求的基本流程：
 
-![cross-origin](./assets/cross-origin.png)
+![cross-origin](/images/posts/what-is-cross-site/cross-origin.png)
 
 1. 浏览器发送一个 OPTIONS 请求，向目标服务器询问是否允许跨域请求。
 2. 预检请求中包含一些额外的头部信息，包括 Origin（表示请求的来源）、Access-Control-Request-Method（表示实际请求将要使用的 HTTP 方法）、Access-Control-Request-Headers（表示实际请求将要携带的自定义头部）等。
@@ -158,7 +158,7 @@ CORS 中的预检请求（Preflight Request）是一种用于验证是否允许�
 
 为了解决这个问题，我们可以在网站 A 的同源服务器上设置一个代理，用于转发客户端的请求。代理服务器收到客户端的请求后，再向目标服务器发起请求，获取数据后再返回给客户端。这样，客户端就能够获取到目标服务器上的数据了。
 
-![proxy](./assets/proxy.png)
+![proxy](/images/posts/what-is-cross-site/proxy.png)
 
 ## **Resources**
 
