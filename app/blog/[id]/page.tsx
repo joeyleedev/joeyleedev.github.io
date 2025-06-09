@@ -61,8 +61,10 @@ export default function BlogDetailPage({ params }: { params: { id: string } }) {
 
   const posts = getAllPosts();
   const currentIndex = posts.findIndex((p) => p.id === params.id);
-  const prevPost = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
-  const nextPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
+  // 上一篇：更新的文章（index - 1）
+  const prevPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
+  // 下一篇：更旧的文章（index + 1）
+  const nextPost = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
 
   return (
     <Suspense fallback={<BlogDetailLoading />}>
