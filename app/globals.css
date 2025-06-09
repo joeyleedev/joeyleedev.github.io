@@ -9,8 +9,9 @@ nav {
 
 nav.scrolled {
   background-color: rgba(255, 255, 255, 0.8);
-  backdrop-filter: saturate(180%) blur(10px);
   border-bottom-color: rgba(234, 234, 234, 0.8);
+  backdrop-filter: saturate(180%) blur(10px);
+  -webkit-backdrop-filter: saturate(180%) blur(10px);
 }
 
 .dark nav.scrolled {
@@ -20,8 +21,9 @@ nav.scrolled {
     10,
     0.8
   ); /* 使用稍微亮一点的黑色，与--background变量(3.9%亮度)匹配 */
-  backdrop-filter: saturate(180%) blur(10px);
   border-bottom-color: rgba(38, 38, 38, 0.8);
+  backdrop-filter: saturate(180%) blur(10px);
+  -webkit-backdrop-filter: saturate(180%) blur(10px);
 }
 
 @layer base {
@@ -81,10 +83,11 @@ nav.scrolled {
 }
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     font-family: "Inter", sans-serif;
   }
 }
@@ -98,24 +101,24 @@ nav.scrolled {
 
 /* 确保 line-clamp 工作正常 */
 .line-clamp-2 {
-  overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 
 .line-clamp-3 {
-  overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
+  overflow: hidden;
 }
 
 .line-clamp-4 {
-  overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
+  overflow: hidden;
 }
 
 /* 博客卡片高度统一优化 */
