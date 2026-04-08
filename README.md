@@ -72,17 +72,23 @@
 
 ### 环境要求
 
-- Node.js >= 18.0.0
-- npm >= 9.0.0
+- Node.js 24.14.1
+- pnpm 10.33.0
 
 ### 开发环境
 
 ```bash
+# 使用项目指定的 Node 版本
+fnm use
+
+# 启用 packageManager 中声明的 pnpm 版本
+corepack enable
+
 # 安装依赖
-npm install
+pnpm install
 
 # 启动开发服务器
-npm run dev
+pnpm dev
 
 # 在浏览器中打开 http://localhost:3000
 ```
@@ -91,13 +97,13 @@ npm run dev
 
 ```bash
 # 构建项目
-npm run build
+pnpm build
 
 # 验证构建结果
-npm run validate
+pnpm validate
 
 # 启动生产服务器（本地预览）
-npm start
+pnpm start
 ```
 
 ## 📁 项目结构
@@ -120,13 +126,13 @@ npm start
 
 ## 🛠 可用脚本
 
-- `npm run dev` - 启动开发服务器
-- `npm run build` - 构建生产版本
-- `npm start` - 启动生产服务器
-- `npm run lint` - 运行 ESLint 检查
-- `npm run validate` - 验证构建结果
-- `npm run clean` - 清理缓存和构建文件
-- `npm run type-check` - 运行 TypeScript 类型检查
+- `pnpm dev` - 启动开发服务器
+- `pnpm build` - 构建生产版本
+- `pnpm start` - 启动生产服务器
+- `pnpm lint` - 运行 ESLint 检查
+- `pnpm validate` - 验证构建结果
+- `pnpm clean` - 清理缓存和构建文件
+- `pnpm type-check` - 运行 TypeScript 类型检查
 
 ## 🔧 技术栈
 

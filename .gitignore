@@ -7,9 +7,11 @@
 
 # package managers
 npm-debug.log*
+pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .yarn/install-state.gz
+.pnpm-store/
 
 # testing
 /coverage
