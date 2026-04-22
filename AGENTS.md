@@ -1,18 +1,27 @@
 # AGENTS.md
 
-This file is the default working guide for AI coding agents operating in this repository, including Codex and other tool-neutral agents.
+This file is the working guide for AI coding agents operating in this repository. Keep it aligned with the current code, not only with older README claims.
 
-## 1. Project Summary
+## Project Summary
 
 - Project name: `yizi-space`
-- Product type: Chinese-language personal blog / portfolio site
-- Framework: Next.js 14 App Router + React 18 + TypeScript
-- Styling: Tailwind CSS + shadcn/ui + Radix UI + `next-themes`
-- Deployment model: fully static export to GitHub Pages
+- Product type: Chinese-language personal blog and developer portfolio
+- Framework: Next.js 14 App Router, React 18, TypeScript
+- Styling: Tailwind CSS, shadcn-style primitives, Radix UI, `next-themes`
+- Animation: Framer Motion
+- Content source: Markdown files in `content/posts`
+- Deployment model: static export deployed to GitHub Pages
 
-The most important constraint in this repo is that the site must continue to work as a static export. Prefer changes that preserve build-time rendering and avoid introducing runtime server dependencies.
+The key architectural constraint is static export. Prefer build-time rendering and filesystem-backed content over features that require a live Node.js server in production.
 
-## 2. Environment And Commands
+## Environment And Commands
+
+Use pnpm. This repo declares `packageManager` and includes `pnpm-lock.yaml`.
+
+Version expectations:
+
+- Node.js `24.14.1`, also recorded in `.nvmrc`
+- pnpm `10.33.0`
 
 Recommended setup:
 
@@ -25,143 +34,146 @@ pnpm install
 Common commands:
 
 ```bash
-pnpm dev         # local development
-pnpm lint        # eslint
-pnpm type-check  # tsc --noEmit
-pnpm build       # next build -> out/
-pnpm validate    # verify static export output
-pnpm clean       # remove build/cache artifacts
+pnpm dev         # local development server
+pnpm lint        # Next.js ESLint
+pnpm type-check  # TypeScript check with no emit
+pnpm build       # static export into out/
+pnpm validate    # verify exported output
+pnpm clean       # remove .next, out, and node_modules cache
 ```
 
-Version expectations:
+Notes:
 
-- Node.js `>=24.14.1 <25`
-- pnpm `>=10.33.0 <11`
+- Do not add or rely on `package-lock.json`; npm is no longer the active package manager here.
+- `pnpm build` writes static output to `out/` because `next.config.mjs` sets `distDir: "out"`.
+- GitHub Actions deploys `out/` from pushes to `main`.
 
-## 3. Repository Map
+## Repository Map
 
-- `app/`: App Router pages, layouts, and route-level UI
-- `app/blog/[id]/`: static blog detail route
-- `components/`: reusable UI and navigation components
-- `content/posts/`: Markdown blog posts
-- `lib/utils/blog.ts`: blog content loading/parsing
-- `lib/constants.ts`: site metadata, nav items, social links
-- `public/`: static assets
-- `styles/`: extra styles such as markdown presentation
-- `scripts/validate-build.js`: post-build validation
+- `app/`: App Router pages, layout, and route-level UI.
+- `app/page.tsx`: portfolio-style homepage with hero, skills, project placeholders, and contact section.
+- `app/blog/page.tsx`: blog index server wrapper with Suspense loading UI.
+- `app/blog/BlogClient.tsx`: client-side blog list, URL search state, statistics, and mocked tag cloud.
+- `app/blog/[id]/page.tsx`: static blog detail route, `generateStaticParams`, metadata, previous/next post lookup.
+- `app/blog/[id]/BlogDetailClient.tsx`: Markdown rendering, table of contents, reading time, responsive tables, scroll-to-top, previous/next links.
+- `app/admin/page.tsx`: concept-only admin prototype with mock data; not a functional or protected CMS.
+- `components/navigation/Navbar.tsx`: client navbar with search dialog, mobile sheet menu, active links, and social links.
+- `components/ui/logo.tsx`: theme-aware logo image selection.
+- `components/ui/`: reusable shadcn-style UI primitives.
+- `components/theme/`: theme provider and theme mode menu.
+- `content/posts/`: Markdown blog posts.
+- `lib/utils/blog.ts`: build-time Markdown loading and parsing.
+- `lib/constants.ts`: site name, description, social links, and nav links.
+- `public/images/`: post images and static media.
+- `styles/markdown.css`: GitHub Markdown CSS overrides and article presentation.
+- `scripts/validate-build.js`: static export validation.
 
-## 4. Architecture Notes
+## Static Export Rules
 
-### Static export is non-negotiable
-
-`next.config.mjs` enables:
+`next.config.mjs` currently enables:
 
 - `output: "export"`
 - `trailingSlash: true`
 - `images.unoptimized: true`
-- build output in `out/`
+- `distDir: "out"`
 
-Agents should avoid introducing features that depend on a long-running Node server or platform runtime, such as:
+There is currently no `basePath` or `assetPrefix` configured. Do not document or implement `/yizi-space` path assumptions unless the config is changed again.
 
-- API routes as a required production dependency
-- middleware-dependent logic
-- server actions that assume a live server
-- image optimization that requires Next.js runtime support
+Avoid introducing production requirements that conflict with static export, including:
 
-If a requested feature conflicts with static export, call that out clearly before implementing.
+- API routes required by the live site
+- middleware-dependent behavior
+- server actions that need a running server
+- Next.js image optimization that depends on the Next runtime
+- dynamic routes that cannot be generated by `generateStaticParams`
 
-### Server and client components
+If a requested feature needs runtime server behavior, call out the deployment tradeoff before implementing it.
 
-Keep page-level data fetching in server components when possible. Put interactivity into explicit `"use client"` components instead of turning whole routes into client components without need.
+## Blog Content Model
 
-### Blog content model
+Posts are Markdown files under `content/posts`.
 
-Posts are stored as Markdown files under `content/posts/`.
+Current conventions:
 
-Conventions:
+- File extension: `.md`
+- Filename pattern: `YYYY-MM-DD-slug.md`
+- Post id / route param: filename without `.md`
+- Active front matter fields: `title`, `date`, `desc`
+- Sort order: `date` descending
+- Post images should live under `public/images/posts/{slug}/`
 
-- filename pattern: `YYYY-MM-DD-slug.md`
-- frontmatter fields in active use: `title`, `date`, `desc`
-- route param / post id is derived from the filename without `.md`
-- post images should live under `public/images/posts/{slug}/`
+Use this shape for current posts:
 
-`lib/utils/blog.ts` reads from the filesystem at build time. Any content model changes should keep `getAllPosts()` and `getPostById()` consistent with the actual Markdown shape.
+```md
+---
+title: "文章标题"
+date: 2024-06-01
+desc: "文章摘要"
+---
+```
 
-## 5. Working Agreements For Agents
+Important details:
 
-### Prefer small, compatible changes
+- `lib/utils/blog.ts` currently reads only `.md` files, even though dependencies and README text mention MDX.
+- `types/blog.ts` only models `title`, `date`, `desc`, and generated `id`.
+- The blog list search currently filters `title` and `desc`; it does not search full Markdown content.
+- The tag cloud in `BlogClient` is currently mocked and not read from post front matter.
+- The detail page removes the first Markdown H1 before rendering to avoid duplicating the page title.
+- Article metadata in `generateMetadata` uses `data.title`, `data.desc`, and `data.date`.
 
-When editing this repo:
+If you add fields such as `tags`, `author`, `draft`, `cover`, or `updated`, update the type, loader, UI, and docs together.
 
-- preserve existing static-export compatibility
-- preserve Chinese UI copy unless the task asks for copywriting changes
-- reuse existing utilities and constants instead of hardcoding duplicates
-- follow current file organization before inventing new layers
-- keep route additions compatible with pre-rendering
+## UI And Routing Notes
 
-### Be careful with content-driven routes
+- Keep page-level filesystem/content reads in server components when possible.
+- Put browser interactivity in explicit `"use client"` components.
+- Components using `useSearchParams`, such as the navbar and blog client, should stay inside Suspense boundaries where required by Next.js static rendering.
+- The navbar search writes `?search=...` and redirects to `/blog`; keep search state URL-addressable.
+- The blog detail route must remain statically generatable through `generateStaticParams`.
+- Preserve Chinese user-facing copy unless a task explicitly asks for copywriting changes.
+- Reuse existing UI primitives from `components/ui` before adding new primitives.
+- Keep theme-aware logo behavior in `components/ui/logo.tsx` when changing branding.
 
-If you change blog routing or post loading:
+## Styling And Formatting
 
-- ensure `app/blog/[id]/page.tsx` still supports static generation
-- ensure every route can be derived at build time
-- ensure missing-content behavior remains graceful
+Follow the existing Prettier setup:
 
-### Respect current UI stack
+- print width `100`
+- 2-space indentation
+- semicolons enabled
+- double quotes
+- trailing comma `es5`
+- `prettier-plugin-tailwindcss` handles Tailwind class ordering
 
-The codebase already uses shadcn-style components, Tailwind utilities, and `next-themes`. Prefer extending those patterns rather than mixing in a new UI system.
+Other conventions:
 
-### Keep metadata centralized
+- Prefer TypeScript for application code.
+- Use the `@/*` path alias where it improves clarity.
+- Keep Tailwind utilities as the default styling approach.
+- Add comments only when they explain non-obvious behavior.
+- Preserve the existing shadcn/Radix component style instead of mixing in another UI system.
 
-Site name, description, nav links, and social links belong in `lib/constants.ts` unless there is a strong reason to relocate them.
+## Validation Expectations
 
-## 6. Style And Formatting
+Choose checks based on the scope of the change:
 
-- TypeScript-first changes are preferred
-- use the `@/*` path alias where it improves clarity
-- match the existing Prettier setup:
-  - print width `100`
-  - double quotes
-  - trailing comma `es5`
-- keep Tailwind class ordering formatter-friendly
-- add comments only when they clarify non-obvious intent
+- Documentation only: no build required.
+- TypeScript or utility changes: `pnpm type-check`.
+- UI, page, or component changes: `pnpm lint` and `pnpm type-check`.
+- Routing, metadata, content loading, Next config, or deployment changes: `pnpm build` and `pnpm validate`.
 
-## 7. Validation Expectations
+For static export work, always verify that `out/index.html` and `out/.nojekyll` are produced or intentionally handled by the deployment workflow.
 
-Choose checks based on the scope of the change.
+## Common Pitfalls
 
-Run these when relevant:
+- Do not switch back to npm commands or regenerate `package-lock.json`.
+- Do not assume `/yizi-space` is part of production URLs; current config does not set that base path.
+- Do not treat `/admin` as a real backend. It is a public concept prototype with mock data.
+- Do not claim tags, MDX, RSS, comments, analytics, or full-text search are implemented unless the code actually implements them.
+- Do not add blog posts as `.mdx` until the loader supports that extension.
+- Do not break `generateMetadata` or `generateStaticParams` on the blog detail route.
+- Do not silently change the front matter field from `desc` to `description` without a migration.
 
-- `pnpm type-check` for TypeScript changes
-- `pnpm lint` for UI/component/page changes
-- `pnpm build` when routing, config, rendering, or content-loading changes
-- `pnpm validate` after build-related changes
+## Relationship To Other Agent Docs
 
-Minimum recommendation before handoff:
-
-- for docs-only changes: no build required
-- for code changes: `pnpm type-check`
-- for routing/config/content pipeline changes: `pnpm build && pnpm validate`
-
-## 8. Good First Places To Look
-
-Depending on the task:
-
-- site-wide metadata / navigation: `lib/constants.ts`
-- homepage layout/content: `app/page.tsx`
-- blog index: `app/blog/page.tsx` and `app/blog/BlogClient.tsx`
-- blog detail page: `app/blog/[id]/page.tsx` and `app/blog/[id]/BlogDetailClient.tsx`
-- theme behavior: `components/theme/*`
-- navbar / navigation behavior: `components/navigation/*`
-
-## 9. Avoid These Mistakes
-
-- Do not assume a server runtime exists in production.
-- Do not add features that only work with `next start` but not `next export`.
-- Do not break trailing-slash-compatible asset or route paths.
-- Do not move blog metadata into a shape that existing parsers cannot read.
-- Do not silently change user-facing language from Chinese to English.
-
-## 10. Relationship To Other Agent Docs
-
-`CLAUDE.md` contains the same repository guidance packaged for Claude Code. Keep the shared project facts and workflow expectations in sync across both files.
+`CLAUDE.md` also contains repository guidance for Claude Code. If changing shared project facts, command lists, or static export constraints, keep both files consistent when the task scope includes agent documentation.
